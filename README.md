@@ -4,7 +4,7 @@ An enhancement for [Glamorous Toolkit](https://gtoolkit.com) to allow keyboard n
 
 GT's architecture is such that enabling full keyboard navigability (i.e. automating switching tabs, clicking buttons, and in general targeting/focusing every part of the user interface) is straightforward. The "one rendering tree" aspect of the environment allows for all interesting UI "destinations" to be tagged such that they can then be targeted for receiving events, or actioning programmatically. The idea with this feature enables a single top level shortcut to trigger arbitrary UI-related actions. GT also includes full support for UI automation out of the box.
 
-![Navigation Screencast](https://imgur.com/Ybqu4hz)
+![Navigation Screencast](./GT-navigation.gif)
 
 ## Load the project
 
