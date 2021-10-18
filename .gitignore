@@ -29,3 +29,10 @@ SqueakDebug.log
 # Metacello-github cache
 /github-cache
 github-*.zip
+
+VSCode History
+/.history
+.metals/metals.h2.db
+.metals/metals.log
+.vscode/settings.json
+.metals/metals.lock.db
