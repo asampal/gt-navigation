@@ -28,6 +28,15 @@ GtNavigationEventHandler class >> initialize [
 		                  copyWith: BlKeyboardKey backspace name asString
 ]
 
+{ #category : #creation }
+GtNavigationEventHandler >> createNavigationFor: aNavRootElement [
+
+	aNavRootElement
+		addChild:
+		(GtNavigation new initializeWith: aNavRootElement andHandler: self)
+		as: NavigationId
+]
+
 { #category : #'event handling' }
 GtNavigationEventHandler >> eventsToHandle [
 	^ { 
@@ -43,26 +52,30 @@ GtNavigationEventHandler >> getKeyName: aKeyEvent [
 	| key |
 	key := aKeyEvent key.
 	(NavigationKeys includes: key name)
-		ifTrue: [ 
-			Transcript crShow: key asString.
-			^ key name ]
+		ifTrue: [ ^ key name ]
 		ifFalse: [ ^ '' ]
 ]
 
 { #category : #'UI - handling' }
-GtNavigationEventHandler >> hideNavigation: aRootElement [
+GtNavigationEventHandler >> hideNavigation: aNavRootElement [
 
-	aRootElement
+	aNavRootElement
 		childWithId: NavigationId
-		ifFound: [ :aNavigation | 
-			aNavigation removeChildren.
-			aRootElement removeChildNamed: NavigationId ]
-		ifNone: [ ^ self ]
+		ifFound: [ :aNavigation | aNavigation hideNavigation ]
 ]
 
 { #category : #'event handling' }
 GtNavigationEventHandler >> hideNavigationEvent: aHideNavigationEvent [
 	self hideNavigation: aHideNavigationEvent currentTarget
+]
+
+{ #category : #'UI - handling' }
+GtNavigationEventHandler >> hideOrShowNavigationFor: aNavRootElement [
+
+	aNavRootElement
+		childWithId: NavigationId
+		ifFound: [ :aNavigation | aNavigation hideNavigation ]
+		ifNone: [ self createNavigationFor: aNavRootElement ]
 ]
 
 { #category : #accesing }
@@ -83,10 +96,10 @@ GtNavigationEventHandler >> initialize [
 GtNavigationEventHandler >> keyDownEvent: aKeyDownEvent [
 
 	| focusRoot |
+	aKeyDownEvent consumed: true.
 	focusRoot := aKeyDownEvent currentTarget.
 	focusRoot childWithId: NavigationId ifFound: [ :navi | 
-		navi handleNavigationString: (self getKeyName: aKeyDownEvent) ].
-	aKeyDownEvent consumed: true
+		navi handleNavigationString: (self getKeyName: aKeyDownEvent) ]
 ]
 
 { #category : #'event handling' }
@@ -96,12 +109,12 @@ GtNavigationEventHandler >> keyUpEvent: aKeyUpEvent [
 ]
 
 { #category : #'UI - handling' }
-GtNavigationEventHandler >> showNavigation: aRootElement [
+GtNavigationEventHandler >> showNavigation: aNavRootElement [
 
-	aRootElement
-		addChild:
-		(GtNavigation new initializeWith: aRootElement andHandler: self)
-		as: NavigationId
+	Transcript crShow: 'Show Navigation'.
+	aNavRootElement
+		childWithId: NavigationId
+		ifNone: [ self createNavigationFor: aNavRootElement ]
 ]
 
 { #category : #'event handling' }

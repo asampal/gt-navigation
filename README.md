@@ -1,6 +1,6 @@
 # Glamorous Toolkit (GT) Keyboard Navigation
 
-An enhancement for [Glamorous Toolkit](https://gtoolkit.com) to allow keyboard navigation around the environment
+An enhancement (currently WIP) for [Glamorous Toolkit](https://gtoolkit.com) to allow keyboard navigation around the environment
 
 GT's architecture is such that enabling full keyboard navigability (i.e. automating switching tabs, clicking buttons, and in general targeting/focusing every part of the user interface) is straightforward. The "one rendering tree" aspect of the environment allows for all interesting UI "destinations" to be tagged such that they can then be targeted for receiving events, or actioning programmatically. The idea with this feature enables a single top level shortcut to trigger arbitrary UI-related actions. GT also includes full support for UI automation out of the box.
 
@@ -17,33 +17,33 @@ Metacello new
 
 ## Install the shortcut to toggle navigation on/off
 
-Note that the following only installs the shortcut for navigation into the focused GtWorld. You can instead iterate over all worlds to set for all. Ideally the shortcut should be installed whenever a world opens.
+Note that the following only installs the shortcut (Ctrl + ;) for navigation into the focused GtWorld. You can instead iterate over all worlds to set for all. Ideally the shortcut should be installed whenever a world opens.
 
 ```smalltalk
-root := (GtWorld allInstances detect: [:world | world focused]) root.
-root addShortcut: (BlShortcutWithAction new 
-	combination: (BlKeyCombination builder control; key: BlKeyboardKey semicolon; build);
-	action: [ 
-		root eventDispatcher filters 
-			detect: [:filter| filter class = GtNavigationEventHandler] 
-			ifFound: [:filter |
-				"self inform: 'Hide Navigation'."
-				filter hideNavigation: root.
-				root removeEventFilter: filter]
-			ifNone: [| filter filters |
-				"self inform: 'Show Navigation'."
-				filter := GtNavigationEventHandler new.
-				root addEventFilter: filter.
-				filter showNavigation: root.]])
+(GtWorld allInstances collect: [:world | world root]) do: [:root | 
+	root addShortcut: (BlShortcutWithAction new 
+		combination: (BlKeyCombination builder control; key: BlKeyboardKey semicolon; build);
+		action: [ 
+			root eventDispatcher filters 
+				detect: [:filter| filter class = GtNavigationEventHandler] 
+				ifFound: [:filter |
+					"Transcript crShow: 'Hide Navigation'."
+					filter hideNavigation: root.
+					root removeEventFilter: filter]
+				ifNone: [| filter filters |
+					"Transcript crShow: 'Show Navigation'."
+					filter := GtNavigationEventHandler new.
+					root addEventFilter: filter.
+					filter showNavigation: root]])]
 ```
 
 ## To remove the shortcut, do something like the following:
 
-Since there is no (currently) other shortcut installed at this level, removing all should be safe. 
+Since there are no (currently) other shortcuts installed at this level, removing all should be safe. 
 
 ```smalltalk
-world := GtWorld allInstances detect: [:world | world focused].
-world root eventDispatcher shortcutHandler shortcuts removeAll; compact
+(GtWorld allInstances collect: [:world | world root]) do: [:root | 
+	root eventDispatcher shortcutHandler shortcuts removeAll; compact]
 ```
 
 ## To remove the GtNavigationEventHandler
@@ -51,13 +51,13 @@ world root eventDispatcher shortcutHandler shortcuts removeAll; compact
 In case you need to manually remove it run something like the following:
 
 ```smalltalk
-world root removeEventFiltersSuchThat: [:filter | filter class = GtNavigationEventHandler].
+(GtWorld allInstances collect: [:world | world root]) do: [:root | 
+	root removeEventFiltersSuchThat: [:filter | filter class = GtNavigationEventHandler]]
 ```
 
-## Note
+## Notes/Gotchas
 
 - When you navigate to an editor, the keys you press for the tag will actually be typed in the editor so you'll need to delete them
-- For some reason, after matching a tag, you'll need to press the navigation shortcut, Ctrl + ;, twice to bring up the overlays
 - Installing the navigation will require some code to be run to load the project and to install a shortcut to toggle navigation on/off
 - Tag labels aren't centered in the overlays
 - Some UI elements you would probably like to navigate to won't be tagged (currently candidates must be isVisibleInSpace and meet isMemberOf: BrTab,  isKindOf: BrEditor, or isKindOf: BrButton - lots of ideas how this could be enhanced.

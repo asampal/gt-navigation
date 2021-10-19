@@ -66,19 +66,17 @@ GtNavigation >> handleNavigationString: aKeyName [
 		ifFalse: [ 
 			currentTag size = 2 ifTrue: [ ^ self ].
 			currentTag := currentTag , aKeyName.
-			self
-				childNamed: currentTag
-				ifFound: [ :tag | "self inform: 'Acting on ' , tag asString."
-					self hideNavigation.
-					tag simulateClickOnReference.
-					overlays valuesDo: [ :overlay | overlay detach ] ] ]
+			self childNamed: currentTag ifFound: [ :tag | 
+				self hideNavigation.
+				tag simulateClickOnReference.
+				overlays valuesDo: [ :overlay | overlay detach ] ] ]
 ]
 
 { #category : #accessing }
 GtNavigation >> hideNavigation [
 
-	navigationEventHandler handleEvent:
-		(GtNavigationHideWish new currentTarget: targetContainer)
+	self removeChildren.
+	self parent removeChild: self
 ]
 
 { #category : #initialization }
