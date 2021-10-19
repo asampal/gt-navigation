@@ -20,21 +20,18 @@ Metacello new
 Note that the following only installs the shortcut (Ctrl + ;) for navigation into the focused GtWorld. You can instead iterate over all worlds to set for all. Ideally the shortcut should be installed whenever a world opens.
 
 ```smalltalk
-(GtWorld allInstances collect: [:world | world root]) do: [:root | 
+(GtWorld allInstances collect: [:world | world root]) do: [:root |
+	root addEventFilter: GtNavigationEventHandler new. 
 	root addShortcut: (BlShortcutWithAction new 
 		combination: (BlKeyCombination builder control; key: BlKeyboardKey semicolon; build);
-		action: [ 
+		action: [ |aNavFilter |
 			root eventDispatcher filters 
-				detect: [:filter| filter class = GtNavigationEventHandler] 
-				ifFound: [:filter |
-					"Transcript crShow: 'Hide Navigation'."
-					filter hideNavigation: root.
-					root removeEventFilter: filter]
-				ifNone: [| filter filters |
-					"Transcript crShow: 'Show Navigation'."
-					filter := GtNavigationEventHandler new.
-					root addEventFilter: filter.
-					filter showNavigation: root]])]
+				detect: [:filter | filter class = GtNavigationEventHandler]
+				ifFound: [:filter | aNavFilter := filter]
+				ifNone: [
+					aNavFilter := GtNavigationEventHandler new.
+					root addEventFilter: aNavFilter].
+			aNavFilter hideOrShowNavigationFor: root])]
 ```
 
 ## To remove the shortcut, do something like the following:
@@ -52,7 +49,10 @@ In case you need to manually remove it run something like the following:
 
 ```smalltalk
 (GtWorld allInstances collect: [:world | world root]) do: [:root | 
-	root removeEventFiltersSuchThat: [:filter | filter class = GtNavigationEventHandler]]
+	root removeEventFiltersSuchThat: [:filter | filter class = GtNavigationEventHandler].
+	root childWithId: 'gtoolkit-navigation'
+		ifFound: [ :aNavigation | 
+			aNavigation hideNavigation ]]
 ```
 
 ## Notes/Gotchas
