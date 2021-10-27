@@ -58,6 +58,7 @@ In case you need to manually remove it run something like the following:
 ## Notes/Gotchas
 
 - When you navigate to an editor, the keys you press for the tag will actually be typed in the editor so you'll need to delete them
+- Some elements like the Spotter and other "floating" UI components allow the navigation points of underlying UI elements to "show through" if the "floating" elements are in an opened state, rather than obscuring them as expected
 - Installing the navigation will require some code to be run to load the project and to install a shortcut to toggle navigation on/off
 - Tag labels aren't centered in the overlays
 - Some UI elements you would probably like to navigate to won't be tagged (currently candidates must be isVisibleInSpace and meet isMemberOf: BrTab,  isKindOf: BrEditor, or isKindOf: BrButton - lots of ideas how this could be enhanced.
