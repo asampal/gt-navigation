@@ -11,7 +11,7 @@ GT's architecture is such that enabling full keyboard navigability (i.e. automat
 ```smalltalk
 Metacello new
   baseline: 'GToolkitNavigation';
-  reposblitory: 'github://asampal/gt-navigation:main/src';
+  repository: 'github://asampal/gt-navigation:main/src';
   load.
 ```
 
