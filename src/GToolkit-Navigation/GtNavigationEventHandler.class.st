@@ -31,19 +31,22 @@ GtNavigationEventHandler class >> initialize [
 { #category : #creation }
 GtNavigationEventHandler >> createNavigationFor: aNavRootElement [
 
-	aNavRootElement
-		addChild:
-		(GtNavigation new initializeWith: aNavRootElement andHandler: self)
-		as: NavigationId
+	| nav |
+	nav := GtNavigation
+		       rootedAt: aNavRootElement
+		       as: NavigationId
+		       withHandler: self.
+	aNavRootElement space focusOwner: nav
 ]
 
 { #category : #'event handling' }
 GtNavigationEventHandler >> eventsToHandle [
+
 	^ { 
 		  GtNavigationShowWish.
 		  GtNavigationHideWish.
 		  BlKeyDownEvent.
-		  BlKeyUpEvent }
+		  BlTextInputEvent }
 ]
 
 { #category : #'api - accessing' }
@@ -95,17 +98,13 @@ GtNavigationEventHandler >> initialize [
 { #category : #'event handling' }
 GtNavigationEventHandler >> keyDownEvent: aKeyDownEvent [
 
-	| focusRoot |
-	aKeyDownEvent consumed: true.
-	focusRoot := aKeyDownEvent currentTarget.
-	focusRoot childWithId: NavigationId ifFound: [ :navi | 
-		navi handleNavigationString: (self getKeyName: aKeyDownEvent) ]
-]
-
-{ #category : #'event handling' }
-GtNavigationEventHandler >> keyUpEvent: aKeyUpEvent [
-
-	aKeyUpEvent consumed: true
+	| keyName |
+	aKeyDownEvent currentTarget
+		childWithId: NavigationId
+		ifFound: [ :navi | 
+			keyName := self getKeyName: aKeyDownEvent.
+			navi handleNavigationString: keyName.
+			aKeyDownEvent consumed: true ]
 ]
 
 { #category : #'UI - handling' }
@@ -122,4 +121,16 @@ GtNavigationEventHandler >> showNavigationEvent: aShowNavigationEvent [
 
 	aShowNavigationEvent consumed: true.
 	self showNavigation: aShowNavigationEvent currentTarget
+]
+
+{ #category : #'api - accessing' }
+GtNavigationEventHandler >> textInputEvent: aTextInputEvent [
+
+	aTextInputEvent currentTarget eventDispatcher handlersDo: [ :handler | 
+		handler class = BlOverlayListener ifTrue: [ 
+			Transcript crShow: 'true' ] ].
+
+	aTextInputEvent currentTarget
+		childWithId: NavigationId
+		ifFound: [ :aNavigation | aTextInputEvent consumed: true ]
 ]

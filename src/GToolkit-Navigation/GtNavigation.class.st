@@ -27,31 +27,27 @@ GtNavigation class >> initialize [
 	LeftHandKeys := 'FDSAGTREWQBVCXZ'
 ]
 
-{ #category : #processing }
-GtNavigation >> createTagFrom: aLabel [
+{ #category : #'instance creation' }
+GtNavigation class >> new [
 
-	^ BlElement new
-		  constraintsDo: [ :c | 
-			  c ignoreByLayout.
-			  c ignored horizontal alignCenter.
-			  c ignored vertical alignCenter ];
-		  size: 20 @ 20;
-		  elevation: (BlRelativeElevation elevation: 10);
-		  geometry: BlCircle new;
-		  aptitude: (BrStyleCommonAptitude new default: [ :aStyle | 
-					   aStyle border: (BlBorder
-								    paint:
-									    (BrTheme default button textHighlightColor alpha: 0.9)
-								    width: 2).
-					   aStyle background:
-							   (BrTheme default button textHighlightColor alpha: 0.9) ]);
-		  addChild:
-			  (BlElement new aptitude: (BrGlamorousTextLabelAptitude new
-						    foreground: Color black;
-						    fontSize: 14;
-						    padding: (BlInsets all: 1);
-						    bold;
-						    text: aLabel))
+	self error: 'Do not create an instance of ' , self name
+		, ' using new. Please use #rootedAt:as: instead'
+]
+
+{ #category : #'instance creation' }
+GtNavigation class >> rootedAt: aNavRootElement as: aName [
+
+	^ self basicNew
+		  initializeWith: aNavRootElement as: aName;
+		  setOverlays
+]
+
+{ #category : #'instance creation' }
+GtNavigation class >> rootedAt: aNavRootElement as: aName withHandler: anEventHandler [
+
+	^ self basicNew
+		  initializeWith: aNavRootElement as: aName withHandler: anEventHandler;
+		  setOverlays
 ]
 
 { #category : #processing }
@@ -69,7 +65,7 @@ GtNavigation >> handleNavigationString: aKeyName [
 			self childNamed: currentTag ifFound: [ :tag | 
 				self hideNavigation.
 				tag simulateClickOnReference.
-				overlays valuesDo: [ :overlay | overlay detach ] ] ]
+				overlays valuesDo: [ :aTag | aTag detach ] ] ]
 ]
 
 { #category : #accessing }
@@ -90,29 +86,28 @@ GtNavigation >> initialize [
 ]
 
 { #category : #initialization }
-GtNavigation >> initializeWith: aRootElement andHandler: aNavigationEventHandler [
+GtNavigation >> initializeWith: aRootElement as: aName [
 
-	| selectTargets tag label |
+	super initialize.
+	self initialize.
 	targetContainer := aRootElement.
-	self size: aRootElement extent.
-	navigationEventHandler := aNavigationEventHandler.
+	targetContainer addChild: self as: aName.
+	self
+		size: aRootElement extent;
+		clipChildren: false
+]
 
-	selectTargets := [ :element | 
-	                 element isVisibleInSpace ifTrue: [ 
-		                 ((element isMemberOf: BrTab) or: [ 
-			                  (element isKindOf: BrEditor) or: [ 
-				                  (element isKindOf: BrButton) or: [ 
-					                  element isKindOf: BrExpander ] ] ]) ifTrue: [ 
-			                 label := self nextClickTag.
-			                 tag := self createTagFrom: label.
-			                 self
-				                 addChild: ((BlOverlayElement on: element)
-						                  clipChildren: false;
-						                  addChild: tag)
-				                 as: label asSymbol ].
-		                 element children do: selectTargets ] ].
+{ #category : #initialization }
+GtNavigation >> initializeWith: aRootElement as: aName withHandler: anEventHandler [
 
-	aRootElement children do: selectTargets
+	super initialize.
+	self initialize.
+	navigationEventHandler := anEventHandler.
+	targetContainer := aRootElement.
+	targetContainer addChild: self as: aName.
+	self
+		size: aRootElement extent;
+		clipChildren: false
 ]
 
 { #category : #processing }
@@ -124,6 +119,37 @@ GtNavigation >> nextClickTag [
 	leftIndex := leftIndex + 1.
 	leftIndex > LeftHandKeys size ifTrue: [ 
 		rightIndex := rightIndex + 1.
+		rightIndex > RightHandKeys size ifTrue: [ rightIndex := 1 ].
 		leftIndex := 1 ].
 	^ tag
+]
+
+{ #category : #accessing }
+GtNavigation >> setOverlays [
+
+	| selectTargets label tag |
+	selectTargets := [ :element | 
+	                 element ~= self & element isVisibleInSpace ifTrue: [ 
+		                 (element isMemberOf: BrTab)
+		                 | (element isKindOf: BrEditor)
+		                 | (element isKindOf: BrButton)
+		                 | (element isKindOf: BrExpander) ifTrue: [ 
+			                 label := self nextClickTag.
+			                 tag := GtNavigationTag
+				                        on: element
+				                        labeledAs: label
+				                        withHandler: navigationEventHandler.
+			                 self
+				                 addChild: tag as: label asSymbol;
+				                 clipChildren: false.
+			                 overlays at: label put: tag ].
+		                 element children do: selectTargets ] ].
+
+	targetContainer children do: selectTargets
+]
+
+{ #category : #accessing }
+GtNavigation >> targetContainer: anElement [
+
+	targetContainer := anElement
 ]
