@@ -10,7 +10,7 @@ Class {
 { #category : #'instace creation' }
 GtNavigationTag class >> on: anElement labeledAs: aLabel withHandler: anEventHandler [
 
-	^ (self new attachTo: anElement) 
+	^ (self new attachTo: anElement withHandler:anEventHandler) 
 		  setLabeledContent: aLabel
 ]
 
