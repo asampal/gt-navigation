@@ -1,40 +1,14 @@
 Class {
 	#name : #GtNavigationTag,
 	#superclass : #BlOverlayElement,
-	#instVars : [
-		'navigationHandler'
-	],
 	#category : #'GToolkit-Navigation-UI'
 }
 
 { #category : #'instace creation' }
-GtNavigationTag class >> on: anElement labeledAs: aLabel withHandler: anEventHandler [
+GtNavigationTag class >> on: anElement labeledAs: aLabel [
 
-	^ (self new attachTo: anElement withHandler:anEventHandler) 
+	^ (self new attachTo: anElement) 
 		  setLabeledContent: aLabel
-]
-
-{ #category : #'instace creation' }
-GtNavigationTag >> attachTo: anElement withHandler: anEventHandler [
-
-	referenceElement = anElement ifTrue: [ ^ self ].
-
-	self isAttached ifTrue: [ self detach ].
-
-	navigationHandler := anEventHandler.
-	referenceElement := anElement.
-	anElement addEventHandler: overlayListener.
-	anElement addEventHandler: anEventHandler
-]
-
-{ #category : #accessing }
-GtNavigationTag >> detach [
-
-	self isAttached ifFalse: [ ^ self ].
-
-	referenceElement removeEventHandler: overlayListener.
-	referenceElement removeEventHandler: navigationHandler.
-	referenceElement := nil
 ]
 
 { #category : #accessing }

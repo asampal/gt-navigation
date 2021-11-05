@@ -12,11 +12,16 @@ Class {
 		'rightIndex',
 		'navigationEventHandler',
 		'currentTag',
-		'overlays'
+		'overlays',
+		'inputStatus'
 	],
 	#classVars : [
 		'LeftHandKeys',
 		'RightHandKeys'
+	],
+	#classInstVars : [
+		'targetContainer',
+		'inputStatus'
 	],
 	#category : #'GToolkit-Navigation-UI'
 }
@@ -58,10 +63,12 @@ GtNavigation >> handleNavigationString: aKeyName [
 		ifTrue: [ 
 			(currentTag size between: 1 and: 2) ifTrue: [ 
 				currentTag := currentTag allButLast ].
+			inputStatus text: currentTag.
 			^ self ]
 		ifFalse: [ 
 			currentTag size = 2 ifTrue: [ ^ self ].
 			currentTag := currentTag , aKeyName.
+			inputStatus text: currentTag.
 			self childNamed: currentTag ifFound: [ :tag | 
 				self hideNavigation.
 				tag simulateClickOnReference.
@@ -92,9 +99,11 @@ GtNavigation >> initializeWith: aRootElement as: aName [
 	self initialize.
 	targetContainer := aRootElement.
 	targetContainer addChild: self as: aName.
+	inputStatus := GtNavigationStatus for: self.
 	self
 		size: aRootElement extent;
-		clipChildren: false
+		clipChildren: false;
+		addChild: inputStatus
 ]
 
 { #category : #initialization }
@@ -105,6 +114,7 @@ GtNavigation >> initializeWith: aRootElement as: aName withHandler: anEventHandl
 	navigationEventHandler := anEventHandler.
 	targetContainer := aRootElement.
 	targetContainer addChild: self as: aName.
+	inputStatus := GtNavigationStatus on: self.
 	self
 		size: aRootElement extent;
 		clipChildren: false
@@ -137,8 +147,7 @@ GtNavigation >> setOverlays [
 			                 label := self nextClickTag.
 			                 tag := GtNavigationTag
 				                        on: element
-				                        labeledAs: label
-				                        withHandler: navigationEventHandler.
+				                        labeledAs: label.
 			                 self
 				                 addChild: tag as: label asSymbol;
 				                 clipChildren: false.
@@ -146,10 +155,4 @@ GtNavigation >> setOverlays [
 		                 element children do: selectTargets ] ].
 
 	targetContainer children do: selectTargets
-]
-
-{ #category : #accessing }
-GtNavigation >> targetContainer: anElement [
-
-	targetContainer := anElement
 ]
