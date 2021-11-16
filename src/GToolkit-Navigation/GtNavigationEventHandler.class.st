@@ -36,7 +36,8 @@ GtNavigationEventHandler >> createNavigationFor: aNavRootElement [
 		       rootedAt: aNavRootElement
 		       as: NavigationId
 		       withHandler: self.
-	aNavRootElement space focusOwner: nav
+	"aNavRootElement space focusOwner: nav"
+	nav focused: true
 ]
 
 { #category : #'event handling' }
@@ -45,8 +46,7 @@ GtNavigationEventHandler >> eventsToHandle [
 	^ { 
 		  GtNavigationShowWish.
 		  GtNavigationHideWish.
-		  BlKeyDownEvent.
-		  BlTextInputEvent }
+		  BlKeyDownEvent }
 ]
 
 { #category : #'api - accessing' }
@@ -81,14 +81,6 @@ GtNavigationEventHandler >> hideOrShowNavigationFor: aNavRootElement [
 		ifNone: [ self createNavigationFor: aNavRootElement ]
 ]
 
-{ #category : #accesing }
-GtNavigationEventHandler >> inNavigationFor: focusRoot [
-	<return: #Boolean>
-	
-	focusRoot childWithId: NavigationId ifFound: [ ^ true ].
-	^ false
-]
-
 { #category : #initialization }
 GtNavigationEventHandler >> initialize [
 
@@ -121,16 +113,4 @@ GtNavigationEventHandler >> showNavigationEvent: aShowNavigationEvent [
 
 	aShowNavigationEvent consumed: true.
 	self showNavigation: aShowNavigationEvent currentTarget
-]
-
-{ #category : #'api - accessing' }
-GtNavigationEventHandler >> textInputEvent: aTextInputEvent [
-
-	aTextInputEvent currentTarget eventDispatcher handlersDo: [ :handler | 
-		handler class = BlOverlayListener ifTrue: [ 
-			Transcript crShow: 'true' ] ].
-
-	aTextInputEvent currentTarget
-		childWithId: NavigationId
-		ifFound: [ :aNavigation | aTextInputEvent consumed: true ]
 ]
