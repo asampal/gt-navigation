@@ -10,7 +10,6 @@ Class {
 		'targetContainer',
 		'leftIndex',
 		'rightIndex',
-		'navigationEventHandler',
 		'currentTag',
 		'overlays',
 		'inputStatus'
@@ -47,12 +46,10 @@ GtNavigation class >> rootedAt: aNavRootElement as: aName [
 		  setOverlays
 ]
 
-{ #category : #'instance creation' }
-GtNavigation class >> rootedAt: aNavRootElement as: aName withHandler: anEventHandler [
+{ #category : #accessing }
+GtNavigation >> getTagElementFor: anElement label: aLabel [
 
-	^ self basicNew
-		  initializeWith: aNavRootElement as: aName withHandler: anEventHandler;
-		  setOverlays
+	^ GtNavigationTag on: anElement labeledAs: aLabel
 ]
 
 { #category : #processing }
@@ -83,20 +80,13 @@ GtNavigation >> hideNavigation [
 ]
 
 { #category : #initialization }
-GtNavigation >> initialize [
+GtNavigation >> initializeWith: aRootElement as: aName [
 
 	super initialize.
 	leftIndex := 1.
 	rightIndex := 1.
 	currentTag := ''.
-	overlays := Dictionary new
-]
-
-{ #category : #initialization }
-GtNavigation >> initializeWith: aRootElement as: aName [
-
-	super initialize.
-	self initialize.
+	overlays := Dictionary new.
 	targetContainer := aRootElement.
 	targetContainer addChild: self as: aName.
 	inputStatus := GtNavigationStatus for: self.
@@ -111,7 +101,6 @@ GtNavigation >> initializeWith: aRootElement as: aName withHandler: anEventHandl
 
 	super initialize.
 	self initialize.
-	navigationEventHandler := anEventHandler.
 	targetContainer := aRootElement.
 	targetContainer addChild: self as: aName.
 	inputStatus := GtNavigationStatus on: self.
@@ -144,12 +133,10 @@ GtNavigation >> setOverlays [
 		                 | (element isKindOf: BrEditor)
 		                 | (element isKindOf: BrButton)
 		                 | (element isKindOf: BrExpander) ifTrue: [ 
-			                 label := self nextClickTag.
-			                 tag := GtNavigationTag
-				                        on: element
-				                        labeledAs: label.
+			                 label := self nextClickTag asSymbol.
+			                 tag := self getTagElementFor: element label: label.
 			                 self
-				                 addChild: tag as: label asSymbol;
+				                 addChild: tag as: label;
 				                 clipChildren: false.
 			                 overlays at: label put: tag ].
 		                 element children do: selectTargets ] ].

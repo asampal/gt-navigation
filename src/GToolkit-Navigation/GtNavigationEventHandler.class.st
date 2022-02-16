@@ -17,25 +17,25 @@ GtNavigationEventHandler class >> initialize [
 { #category : #accessing }
 GtNavigationEventHandler >> eventsToHandle [
 
-	^ { BlKeyDownEvent }
+	^ { BlTextInputEvent }
 ]
 
 { #category : #accessing }
-GtNavigationEventHandler >> getKeyName: aKeyEvent [
+GtNavigationEventHandler >> getKeyName: aTextInputEvent [
 
 	| key |
-	key := aKeyEvent key.
-	(NavigationKeys includes: key name)
-		ifTrue: [ ^ key name ]
+	key := aTextInputEvent text asUppercase.
+	(NavigationKeys includes: key)
+		ifTrue: [ ^ key ]
 		ifFalse: [ ^ '' ]
 ]
 
 { #category : #accessing }
-GtNavigationEventHandler >> keyDownEvent: aKeyDownEvent [
+GtNavigationEventHandler >> textInputEvent: aTextInputEvent [
 
-	| navi keyName |
-	navi := aKeyDownEvent currentTarget.
-	keyName := self getKeyName: aKeyDownEvent.
-	navi handleNavigationString: keyName.
-	aKeyDownEvent consumed: true
+	| nav keyName |
+	nav := aTextInputEvent currentTarget.
+	keyName := self getKeyName: aTextInputEvent.
+	nav handleNavigationString: keyName.
+	aTextInputEvent consumed: true
 ]

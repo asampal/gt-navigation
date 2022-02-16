@@ -22,7 +22,7 @@ Class {
 { #category : #'class initialization' }
 GtNavigationEventFilter class >> initialize [
 
-	NavigationId := 'gtoolkit-navigation'
+	NavigationId := #'gtoolkit-navigation'
 ]
 
 { #category : #creation }
@@ -31,11 +31,10 @@ GtNavigationEventFilter >> createNavigationFor: aNavRootElement [
 	| nav |
 	nav := GtNavigation
 		       rootedAt: aNavRootElement
-		       as: NavigationId
-		       withHandler: self.
+		       as: NavigationId.
 	nav addEventHandler: GtNavigationEventHandler new.
-	nav focused: true
-	"aNavRootElement space focusOwner: nav"
+	"nav focused: true"
+	aNavRootElement space focusOwner: nav
 ]
 
 { #category : #'event handling' }

@@ -47,5 +47,7 @@ GtNavigationTag >> setLabeledContent: aLabel [
 { #category : #'event handling' }
 GtNavigationTag >> simulateClickOnReference [
 
+	BlSpace simulateClickOn: referenceElement.
+	"Need to do two clicks otherwise editors aren't focused"
 	BlSpace simulateClickOn: referenceElement
 ]
