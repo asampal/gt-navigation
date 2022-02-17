@@ -1,6 +1,6 @@
 Class {
 	#name : #GtNavigationStatus,
-	#superclass : #BlOverlayElement,
+	#superclass : #BlElement,
 	#instVars : [
 		'label'
 	],

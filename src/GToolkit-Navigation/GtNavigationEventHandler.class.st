@@ -18,6 +18,7 @@ GtNavigationEventHandler class >> initialize [
 GtNavigationEventHandler >> eventsToHandle [
 
 	^ { BlTextInputEvent }
+	"BlKeyDownEvent."
 ]
 
 { #category : #accessing }
@@ -28,6 +29,19 @@ GtNavigationEventHandler >> getKeyName: aTextInputEvent [
 	(NavigationKeys includes: key)
 		ifTrue: [ ^ key ]
 		ifFalse: [ ^ '' ]
+]
+
+{ #category : #accessing }
+GtNavigationEventHandler >> keyDownEvent: aKeyDownEvent [
+
+	| nav keyName |
+	nav := aKeyDownEvent currentTarget.
+	keyName := aKeyDownEvent key name.
+	keyName = 'Backspace' ifTrue: [ 
+		nav handleNavigationString: keyName.
+		aKeyDownEvent consumed: true ].
+
+	Transcript crShow: 'key down: ' , aKeyDownEvent key name
 ]
 
 { #category : #accessing }

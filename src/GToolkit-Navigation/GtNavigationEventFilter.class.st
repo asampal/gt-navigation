@@ -13,6 +13,9 @@ If a an alphabetic key is pressed while I am active, I ask the GtNavigation inst
 Class {
 	#name : #GtNavigationEventFilter,
 	#superclass : #BlCustomEventHandler,
+	#instVars : [
+		'navigation'
+	],
 	#classVars : [
 		'NavigationId'
 	],
@@ -28,13 +31,15 @@ GtNavigationEventFilter class >> initialize [
 { #category : #creation }
 GtNavigationEventFilter >> createNavigationFor: aNavRootElement [
 
-	| nav |
-	nav := GtNavigation
-		       rootedAt: aNavRootElement
-		       as: NavigationId.
-	nav addEventHandler: GtNavigationEventHandler new.
-	"nav focused: true"
-	aNavRootElement space focusOwner: nav
+	navigation
+		ifNil: [ 
+			navigation := GtNavigation
+				              rootedAt: aNavRootElement
+				              as: NavigationId ]
+		ifNotNil: [ 
+		navigation initializeWith: aNavRootElement as: NavigationId ].
+
+	aNavRootElement space focusOwner: navigation
 ]
 
 { #category : #'event handling' }
@@ -67,16 +72,9 @@ GtNavigationEventFilter >> hideOrShowNavigationFor: aNavRootElement [
 		ifNone: [ self createNavigationFor: aNavRootElement ]
 ]
 
-{ #category : #initialization }
-GtNavigationEventFilter >> initialize [
-
-	super initialize
-]
-
 { #category : #'UI - handling' }
 GtNavigationEventFilter >> showNavigation: aNavRootElement [
 
-	Transcript crShow: 'Show Navigation'.
 	aNavRootElement
 		childWithId: NavigationId
 		ifNone: [ self createNavigationFor: aNavRootElement ]

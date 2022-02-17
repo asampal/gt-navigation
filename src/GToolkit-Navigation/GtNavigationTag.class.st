@@ -38,16 +38,13 @@ GtNavigationTag >> setLabeledContent: aLabel [
 								   bold;
 								   text: aLabel)));
 		clipChildren: false
-	"constraintsDo: [ :c |
-					     	c ignoreByLayout. 
-						     c horizontal alignCenter.
-						     c vertical alignCenter ];"
 ]
 
 { #category : #'event handling' }
 GtNavigationTag >> simulateClickOnReference [
 
 	BlSpace simulateClickOn: referenceElement.
-	"Need to do two clicks otherwise editors aren't focused"
-	BlSpace simulateClickOn: referenceElement
+	"For editors, we need to do two clicks otherwise they aren't focused"
+	(referenceElement isKindOf: BrEditor) ifTrue: [ 
+		BlSpace simulateClickOn: referenceElement ]
 ]

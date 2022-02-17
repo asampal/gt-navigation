@@ -41,21 +41,24 @@ GtNavigation class >> new [
 { #category : #'instance creation' }
 GtNavigation class >> rootedAt: aNavRootElement as: aName [
 
-	^ self basicNew
-		  initializeWith: aNavRootElement as: aName;
-		  setOverlays
+	^ self basicNew initializeWith: aNavRootElement as: aName
 ]
 
 { #category : #accessing }
 GtNavigation >> getTagElementFor: anElement label: aLabel [
 
-	^ GtNavigationTag on: anElement labeledAs: aLabel
+	^ overlays
+		  at: aLabel
+		  ifPresent: [ :tag | "If found, we still want to ensure it's to anElement" 
+			  tag attachTo: anElement ]
+		  ifAbsentPut: [ GtNavigationTag on: anElement labeledAs: aLabel ]
 ]
 
 { #category : #processing }
 GtNavigation >> handleNavigationString: aKeyName [
 
 	aKeyName isEmpty ifTrue: [ ^ self ].
+	Transcript crShow: 'key is: ' , aKeyName.
 	aKeyName = 'Backspace'
 		ifTrue: [ 
 			(currentTag size between: 1 and: 2) ifTrue: [ 
@@ -64,7 +67,7 @@ GtNavigation >> handleNavigationString: aKeyName [
 			^ self ]
 		ifFalse: [ 
 			currentTag size = 2 ifTrue: [ ^ self ].
-			currentTag := currentTag , aKeyName.
+			currentTag := (currentTag , aKeyName) asSymbol.
 			inputStatus text: currentTag.
 			self childNamed: currentTag ifFound: [ :tag | 
 				self hideNavigation.
@@ -86,27 +89,17 @@ GtNavigation >> initializeWith: aRootElement as: aName [
 	leftIndex := 1.
 	rightIndex := 1.
 	currentTag := ''.
-	overlays := Dictionary new.
+	overlays ifNil: [ overlays := Dictionary new ].
 	targetContainer := aRootElement.
 	targetContainer addChild: self as: aName.
-	inputStatus := GtNavigationStatus for: self.
+	inputStatus ifNil: [ inputStatus := GtNavigationStatus for: self ].
+	inputStatus text: ''.
+	self addChild: inputStatus.
 	self
 		size: aRootElement extent;
 		clipChildren: false;
-		addChild: inputStatus
-]
-
-{ #category : #initialization }
-GtNavigation >> initializeWith: aRootElement as: aName withHandler: anEventHandler [
-
-	super initialize.
-	self initialize.
-	targetContainer := aRootElement.
-	targetContainer addChild: self as: aName.
-	inputStatus := GtNavigationStatus on: self.
-	self
-		size: aRootElement extent;
-		clipChildren: false
+		setOverlays;
+		addEventHandler: GtNavigationEventHandler new
 ]
 
 { #category : #processing }
@@ -120,7 +113,7 @@ GtNavigation >> nextClickTag [
 		rightIndex := rightIndex + 1.
 		rightIndex > RightHandKeys size ifTrue: [ rightIndex := 1 ].
 		leftIndex := 1 ].
-	^ tag
+	^ tag asSymbol
 ]
 
 { #category : #accessing }
@@ -133,12 +126,11 @@ GtNavigation >> setOverlays [
 		                 | (element isKindOf: BrEditor)
 		                 | (element isKindOf: BrButton)
 		                 | (element isKindOf: BrExpander) ifTrue: [ 
-			                 label := self nextClickTag asSymbol.
+			                 label := self nextClickTag.
 			                 tag := self getTagElementFor: element label: label.
 			                 self
 				                 addChild: tag as: label;
-				                 clipChildren: false.
-			                 overlays at: label put: tag ].
+				                 clipChildren: false ].
 		                 element children do: selectTargets ] ].
 
 	targetContainer children do: selectTargets
