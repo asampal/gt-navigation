@@ -12,9 +12,11 @@ Class {
 		'rightIndex',
 		'currentTag',
 		'overlays',
-		'inputStatus'
+		'inputStatus',
+		'labelIndex'
 	],
 	#classVars : [
+		'LabelSequence',
 		'LeftHandKeys',
 		'RightHandKeys'
 	],
@@ -27,8 +29,40 @@ Class {
 
 { #category : #initialization }
 GtNavigation class >> initialize [
-	RightHandKeys := 'JKLHYUIOPNM'.
+
+	self labelSequence: nil.
+	RightHandKeys := 'JKLHYUIOPNM,.'.
 	LeftHandKeys := 'FDSAGTREWQBVCXZ'
+]
+
+{ #category : #accessing }
+GtNavigation class >> labelSequence [
+
+	^ LabelSequence
+]
+
+{ #category : #accessing }
+GtNavigation class >> labelSequence: aSequence [
+
+	aSequence ifNil: ([ 
+		 LabelSequence := #( a s d f j k l g h q w e r t y u i o p v b n m c
+		                     x aa ss dd de dc ff ft fg fv fr jj ju jy jn jh
+		                     jm kk ki ll lo gg hh qq ww ee rr tt yy uu ii oo
+		                     pp vv bb nn mm cc xx fj fk fl fy fu fi fo fp fh
+		                     fn fm dj dk dl dy du di do dp dh dn dm sj sk sl
+		                     sy su si so sp sh sn sm aj ak al ay au ai ao ap
+		                     ah an am gj gk gl gy gu gi go gp gh gn gm tj tk
+		                     tl ty tu ti to tp th tn tm ej ek el ey eu ei eo
+		                     ep eh en em wj wk wl wy wu wi wo wp wh wn wm qj
+		                     qk ql qy qu qi qo qp qh qn qm vj vk vl vy vu vi
+		                     vo vp vh vn vm cj ck cl cy cu ci co cp ch cn cm
+		                     uf ud us ua ut ur ue uw uq ug ub uv uc ux if id
+		                     is ia it ir ie iw iq ig ib iv ic ix of od os oa
+		                     ot or oe ow oq ob ov oc ox pf pd ps pa pt pr pe
+		                     pw pq pb pv pc px jf jd js ja jt jr je jw jq jb
+		                     jv jc jx kf kd ks ka kt kr ke kw kq kb kv kc kx
+		                     lf ld ls la lt lr le lw lq lb lv lc lx ) ] 
+			 ifNotNil: [ LabelSequence := aSequence ])
 ]
 
 { #category : #'instance creation' }
@@ -70,14 +104,15 @@ GtNavigation >> handleNavigationString: aKeyName [
 			currentTag := (currentTag , aKeyName) asSymbol.
 			inputStatus text: currentTag.
 			self childNamed: currentTag ifFound: [ :tag | 
-				self hideNavigation.
+				self hideNavigation: false.
 				tag simulateClickOnReference.
 				overlays valuesDo: [ :aTag | aTag detach ] ] ]
 ]
 
 { #category : #accessing }
-GtNavigation >> hideNavigation [
+GtNavigation >> hideNavigation: clearCache [
 
+	clearCache ifTrue: [ overlays valuesDo: [ :aTag | aTag detach ] ].
 	self removeChildren.
 	self parent removeChild: self
 ]
@@ -88,6 +123,7 @@ GtNavigation >> initializeWith: aRootElement as: aName [
 	super initialize.
 	leftIndex := 1.
 	rightIndex := 1.
+	labelIndex = 1.
 	currentTag := ''.
 	overlays ifNil: [ overlays := Dictionary new ].
 	targetContainer := aRootElement.

@@ -46,5 +46,6 @@ GtNavigationTag >> simulateClickOnReference [
 	BlSpace simulateClickOn: referenceElement.
 	"For editors, we need to do two clicks otherwise they aren't focused"
 	(referenceElement isKindOf: BrEditor) ifTrue: [ 
+		[ 250 milliseconds wait ] asAsyncFuture wait.
 		BlSpace simulateClickOn: referenceElement ]
 ]
