@@ -153,21 +153,30 @@ GtNavigation >> nextClickTag [
 ]
 
 { #category : #accessing }
-GtNavigation >> setOverlays [
+GtNavigation >> nextClickTag2 [
+	| tag |
+	tag := (LabelSequence at: labelIndex) asString.
+	labelIndex := labelIndex + 1.
+	labelIndex > LabelSequence size
+		ifTrue: [ labelIndex := LabelSequence size.
+			^ '--' asSymbol ].
+	^ tag asSymbol
+]
 
+{ #category : #accessing }
+GtNavigation >> setOverlays [
 	| selectTargets label tag |
 	selectTargets := [ :element | 
-	                 element ~= self & element isVisibleInSpace ifTrue: [ 
-		                 (element isMemberOf: BrTab)
-		                 | (element isKindOf: BrEditor)
-		                 | (element isKindOf: BrButton)
-		                 | (element isKindOf: BrExpander) ifTrue: [ 
-			                 label := self nextClickTag.
-			                 tag := self getTagElementFor: element label: label.
-			                 self
-				                 addChild: tag as: label;
-				                 clipChildren: false ].
-		                 element children do: selectTargets ] ].
+		element ~= self & element isVisibleInSpace
+			ifTrue: [ (element isMemberOf: BrTab) | (element isKindOf: BrEditor)
+					| (element isKindOf: BrButton) | (element isKindOf: BrTriangle)
+					| (element isKindOf: BrExpander)
+					ifTrue: [ label := self nextClickTag2.
+						tag := self getTagElementFor: element label: label.
+						self
+							addChild: tag as: label;
+							clipChildren: false ].
+				element children do: selectTargets ] ].
 
 	targetContainer children do: selectTargets
 ]

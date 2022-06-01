@@ -55,7 +55,7 @@ GtNavigationEventFilter >> hideNavigation: aNavRootElement [
 
 	aNavRootElement
 		childWithId: NavigationId
-		ifFound: [ :aNavigation | aNavigation hideNavigation: nil ]
+		ifFound: [ :aNavigation | aNavigation hideNavigation: true ]
 ]
 
 { #category : #'event handling' }
@@ -68,7 +68,7 @@ GtNavigationEventFilter >> hideOrShowNavigationFor: aNavRootElement [
 
 	aNavRootElement
 		childWithId: NavigationId
-		ifFound: [ :aNavigation | aNavigation hideNavigation: nil ]
+		ifFound: [ :aNavigation | aNavigation hideNavigation: true ]
 		ifNone: [ self createNavigationFor: aNavRootElement ]
 ]
 
