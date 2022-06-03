@@ -29,7 +29,8 @@ GtNavigationTag >> setLabeledContent: aLabel [
 						constraintsDo: [ :c | 
 							c ignoreByLayout.
 							c ignored horizontal alignCenter.
-							c ignored vertical alignCenter ]))
+							c ignored vertical alignCenter ]));
+		clipChildren: false
 ]
 
 { #category : #'event handling' }
