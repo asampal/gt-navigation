@@ -30,7 +30,24 @@ Class {
 { #category : #initialization }
 GtNavigation class >> initialize [
 
-	self labelSequence: nil.
+	LabelSequence := #( A S D F J K L G H Q W E R T Y U I O P V B N M C
+                     X AA SS DD DE DC FF FT FG FV FR JJ JU JY JN JH
+                     JM KK KI LL LO GG HH QQ WW EE RR TT YY UU II OO
+                     PP VV BB NN MM CC XX FJ FK FL FY FU FI FO FP FH
+                     FN FM DJ DK DL DY DU DI DO DP DH DN DM SJ SK SL
+                     SY SU SI SO SP SH SN SM AJ AK AL AY AU AI AO AP
+                     AH AN AM GJ GK GL GY GU GI GO GP GH GN GM TJ TK
+                     TL TY TU TI TO TP TH TN TM EJ EK EL EY EU EI EO
+                     EP EH EN EM WJ WK WL WY WU WI WO WP WH WN WM QJ
+                     QK QL QY QU QI QO QP QH QN QM VJ VK VL VY VU VI
+                     VO VP VH VN VM CJ CK CL CY CU CI CO CP CH CN CM
+                     UF UD US UA UT UR UE UW UQ UG UB UV UC UX IF ID
+                     IS IA IT IR IE IW IQ IG IB IV IC IX OF OD OS OA
+                     OT OR OE OW OQ OB OV OC OX PF PD PS PA PT PR PE
+                     PW PQ PB PV PC PX JF JD JS JA JT JR JE JW JQ JB
+                     JV JC JX KF KD KS KA KT KR KE KW KQ KB KV KC KX
+                     LF LD LS LA LT LR LE LW LQ LB LV LC LX 'Q;' 'W;' 'E;'
+                     'R;' 'T;' 'Y;' 'U;' 'I;' 'O;' 'P;' 'A-' 'S-' 'D-' 'F-' 'G-' 'H-' 'J-' 'K-' 'L-').
 	RightHandKeys := 'JKLHYUIOPNM,.'.
 	LeftHandKeys := 'FDSAGTREWQBVCXZ'
 ]
@@ -43,26 +60,7 @@ GtNavigation class >> labelSequence [
 
 { #category : #accessing }
 GtNavigation class >> labelSequence: aSequence [
-
-	aSequence ifNil: ([ 
-		 LabelSequence := #( a s d f j k l g h q w e r t y u i o p v b n m c
-		                     x aa ss dd de dc ff ft fg fv fr jj ju jy jn jh
-		                     jm kk ki ll lo gg hh qq ww ee rr tt yy uu ii oo
-		                     pp vv bb nn mm cc xx fj fk fl fy fu fi fo fp fh
-		                     fn fm dj dk dl dy du di do dp dh dn dm sj sk sl
-		                     sy su si so sp sh sn sm aj ak al ay au ai ao ap
-		                     ah an am gj gk gl gy gu gi go gp gh gn gm tj tk
-		                     tl ty tu ti to tp th tn tm ej ek el ey eu ei eo
-		                     ep eh en em wj wk wl wy wu wi wo wp wh wn wm qj
-		                     qk ql qy qu qi qo qp qh qn qm vj vk vl vy vu vi
-		                     vo vp vh vn vm cj ck cl cy cu ci co cp ch cn cm
-		                     uf ud us ua ut ur ue uw uq ug ub uv uc ux if id
-		                     is ia it ir ie iw iq ig ib iv ic ix of od os oa
-		                     ot or oe ow oq ob ov oc ox pf pd ps pa pt pr pe
-		                     pw pq pb pv pc px jf jd js ja jt jr je jw jq jb
-		                     jv jc jx kf kd ks ka kt kr ke kw kq kb kv kc kx
-		                     lf ld ls la lt lr le lw lq lb lv lc lx ) ] 
-			 ifNotNil: [ LabelSequence := aSequence ])
+	aSequence ifNotNil: [ LabelSequence := aSequence ]
 ]
 
 { #category : #'instance creation' }
@@ -123,7 +121,7 @@ GtNavigation >> initializeWith: aRootElement as: aName [
 	super initialize.
 	leftIndex := 1.
 	rightIndex := 1.
-	labelIndex = 1.
+	labelIndex := 1.
 	currentTag := ''.
 	overlays ifNil: [ overlays := Dictionary new ].
 	targetContainer := aRootElement.
@@ -152,7 +150,7 @@ GtNavigation >> nextClickTag [
 	^ tag asSymbol
 ]
 
-{ #category : #accessing }
+{ #category : #processing }
 GtNavigation >> nextClickTag2 [
 	| tag |
 	tag := (LabelSequence at: labelIndex) asString.
