@@ -10,7 +10,7 @@ GtNavigationExamples >> navigationOnTabs [
 	<gtExample>
 	<noTest>
 	<description: 'Tabs with glamorous look'>
-	"| aTabGroup aNavEventHandler |
+	| aTabGroup aNavEventFilter |
 	aTabGroup := BrTabGroup new.
 	aTabGroup aptitude: BrGlamorousTabGroupAptitude new.
 
@@ -47,10 +47,10 @@ GtNavigationExamples >> navigationOnTabs [
 					 margin: (BlInsets all: 10);
 					 background: (Color orange alpha: 0.2) ]).
 
-	aNavEventHandler := GtNavigationEventHandler new.
-	aTabGroup addEventHandler: aNavEventHandler.
-	aNavEventHandler handleEvent:
+	aNavEventFilter := GtNavigationEventFilter new.
+	aTabGroup addEventFilter: aNavEventFilter.
+	aNavEventFilter handleEvent:
 		(GtNavigationShowWish new currentTarget: aTabGroup).
 
-	^ aTabGroup"
+	^ aTabGroup
 ]
