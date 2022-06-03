@@ -30,8 +30,7 @@ Class {
 { #category : #initialization }
 GtNavigation class >> initialize [
 
-	LabelSequence := #( A S D F J K L G H Q W E R T Y U I O P V B N M C
-                     X AA SS DD DE DC FF FT FG FV FR JJ JU JY JN JH
+	LabelSequence := #( AA SS DD DE DC FF FT FG FV FR JJ JU JY JN JH
                      JM KK KI LL LO GG HH QQ WW EE RR TT YY UU II OO
                      PP VV BB NN MM CC XX FJ FK FL FY FU FI FO FP FH
                      FN FM DJ DK DL DY DU DI DO DP DH DN DM SJ SK SL
@@ -81,7 +80,7 @@ GtNavigation >> getTagElementFor: anElement label: aLabel [
 
 	^ overlays
 		  at: aLabel
-		  ifPresent: [ :tag | "If found, we still want to ensure it's to anElement" 
+		  ifPresent: [ :tag | "If found, we still want to ensure it's attached to anElement" 
 			  tag attachTo: anElement ]
 		  ifAbsentPut: [ GtNavigationTag on: anElement labeledAs: aLabel ]
 ]
