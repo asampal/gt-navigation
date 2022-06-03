@@ -21,8 +21,7 @@ GtNavigationTag >> setLabeledContent: aLabel [
 					c ignored vertical alignCenter ];
 				size: 20 @ 20;
 				geometry: BlCircleGeometry new;
-				aptitude: (BrStyleCommonAptitude new
-						default: [ :aStyle | aStyle background: (BrTheme default button textHighlightColor alpha: 0.7) ]);
+				background: BrTheme default button textHighlightColor;
 				addChild: (BlAttributedTextElement new
 						text: aLabel asRopedText;
 						bold;
