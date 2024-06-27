@@ -89,7 +89,7 @@ GtNavigation >> getTagElementFor: anElement label: aLabel [
 GtNavigation >> handleNavigationString: aKeyName [
 
 	aKeyName isEmpty ifTrue: [ ^ self ].
-	Transcript crShow: 'key is: ' , aKeyName.
+	"Transcript crShow: 'key is: ' , aKeyName."
 	aKeyName = 'Backspace'
 		ifTrue: [ 
 			(currentTag size between: 1 and: 2) ifTrue: [ 
