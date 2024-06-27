@@ -2,17 +2,14 @@
 
 An enhancement (currently WIP) for [Glamorous Toolkit](https://gtoolkit.com) to allow keyboard navigation around the environment
 
-GT's architecture is such that enabling full keyboard navigability (i.e. automating switching tabs, clicking buttons, and in general targeting/focusing every part of the user interface) is straightforward. The "one rendering tree" aspect of the environment allows for all interesting UI "destinations" to be tagged such that they can then be targeted for receiving events, or actioning programmatically. The idea with this feature enables a single top level shortcut to trigger arbitrary UI-related actions. GT also includes full support for UI automation out of the box.
+GT's architecture is such that enabling full keyboard navigability (i.e. automating switching tabs, clicking buttons, and in general targeting/focusing every part of the user interface) is straightforward. The "one rendering tree" aspect of the environment allows for all interesting UI "destinations" to be easily tagged so that they can then be targeted for receiving events or for actioning programmatically. The idea with this feature is to enable a very wide range of UI manipulation actions using a uniform approach and just a few top level shortcuts (or only one for the most widely used navigation commands). Since GT also includes full support for scriptable UI automation out of the box, one future enhancement of this tool could be to run such a script with the targeted UI element passed as a parameter.
 
 ![Navigation Screencast](./GT-navigation.gif)
 
 ## Load the project
 
 ```smalltalk
-Metacello new
-  baseline: 'GToolkitNavigation';
-  repository: 'github://asampal/gt-navigation:main/src';
-  load.
+Metacello new	baseline: 'GToolkitNavigation';	repository: 'github://asampal/gt-navigation:main/src';	load
 ```
 
 ## Install the shortcut to toggle navigation on/off
@@ -20,39 +17,21 @@ Metacello new
 Note that the following only installs the shortcut (Ctrl + ;) for navigation into the focused GtWorld. You can instead iterate over all worlds to set for all. Ideally the shortcut should be installed whenever a world opens.
 
 ```smalltalk
-(GtWorld allInstances collect: [:world | world root]) do: [:root |
-	root addEventFilter: GtNavigationEventHandler new. 
-	root addShortcut: (BlShortcutWithAction new 
-		combination: (BlKeyCombination builder control; key: BlKeyboardKey semicolon; build);
-		action: [ |aNavFilter |
-			root eventDispatcher filters 
-				detect: [:filter | filter class = GtNavigationEventHandler]
-				ifFound: [:filter | aNavFilter := filter]
-				ifNone: [
-					aNavFilter := GtNavigationEventHandler new.
-					root addEventFilter: aNavFilter].
-			aNavFilter hideOrShowNavigationFor: root])]
+(GtWorld allInstances collect: [ :world | world root ])	do: [ :root | 		root addEventFilter: GtNavigationEventFilter new.		root			addShortcut: (BlShortcutWithAction new					combination: (BlKeyCombination builder							control;							key: BlKeyboardKey semicolon;							build);					action: [ | aNavFilter |						root eventDispatcher filters							detect: [ :filter | filter class = GtNavigationEventFilter ]							ifFound: [ :filter | aNavFilter := filter ]							ifNone: [ aNavFilter := GtNavigationEventFilter new.								root addEventFilter: aNavFilter ].						aNavFilter hideOrShowNavigationFor: root ];					name: 'gt-navigation') ]
 ```
 
-## To remove the shortcut, do something like the following:
-
-Since there are no (currently) other shortcuts installed at this level, removing all should be safe. 
+## To remove the shortcut run:
 
 ```smalltalk
-(GtWorld allInstances collect: [:world | world root]) do: [:root | 
-	root eventDispatcher shortcutHandler shortcuts removeAll; compact]
+(GtWorld allInstances collect: [ :world | world root ])	do: [ :root | 		root eventDispatcher shortcutHandler shortcuts			removeAllSuchThat: [ :aShortcut | aShortcut name = 'gt-navigation' ];			compact ]
 ```
 
 ## To remove the GtNavigationEventHandler
 
-In case you need to manually remove it run something like the following:
+In case you need to manually remove it run:
 
 ```smalltalk
-(GtWorld allInstances collect: [:world | world root]) do: [:root | 
-	root removeEventFiltersSuchThat: [:filter | filter class = GtNavigationEventHandler].
-	root childWithId: 'gtoolkit-navigation'
-		ifFound: [ :aNavigation | 
-			aNavigation hideNavigation ]]
+(GtWorld allInstances collect: [ :world | world root ])	do: [ :root | 		root			removeEventFiltersSuchThat: [ :filter | filter class = GtNavigationEventFilter ].		root			childWithId: 'gtoolkit-navigation'			ifFound: [ :aNavigation | aNavigation hideNavigation ] ]
 ```
 
 ## Notes/Gotchas
